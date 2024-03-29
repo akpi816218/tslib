@@ -81,14 +81,9 @@ export class Queue<T> {
 		return this.size === 0;
 	}
 }
-
 export default Queue;
 
 const q = new Queue<number>([], 5);
-q.pushEnd(1);
-console.log(q.popStart());
-process.exit();
-
 q.pushEnd(1);
 console.log(q._startIndex, q.size); // 0 1
 q.pushEnd(2);
