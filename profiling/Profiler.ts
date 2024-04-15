@@ -1,46 +1,48 @@
-export enum LogInputEntryType {
-	Start = 'Start',
-	End = 'End'
-}
+type LogInputEntryType = 'Start' | 'End';
 
-export type LogInputEntryRow = [string, string, LogInputEntryType];
+type LogInputEntryRow = [string, string, LogInputEntryType];
 
-export interface LogInputEntry {
+interface LogInputEntry {
 	ts: number;
 	name: string;
 	type: LogInputEntryType;
 }
 
-export interface Profile {
+interface Profile {
 	name: string;
 	duration: number;
 	children?: Profile[];
 }
 
-export function profile(entries: LogInputEntry[]): Profile[] {
-	// console.log(parent, entries);
+function findEndIndex(entries: LogInputEntry[], start: LogInputEntry): number {
+	// return entries.findIndex(v => v.name === start.name && v.type === 'End');
+}
+
+function profile(entries: LogInputEntry[]): Profile[] {
+	if (entries.length === 0) return [];
+	if (entries.length === 2)
+		return [{ name: entries[0].name, duration: entries[1].ts - entries[0].ts }];
+
 	const stack: Profile[] = [];
+
 	while (entries.length > 0) {
 		const first = entries[0];
-		const blockEndIndex = entries.findIndex(
-			v => v.name === first.name && v.type === LogInputEntryType.End
-		);
-		const block = entries.slice(1, blockEndIndex);
-		// console.log('block', block);
-		if (block.length > 0)
-			stack.push({
-				name: first.name,
-				duration:
-					entries.find(
-						v => v.name === first.name && v.type === LogInputEntryType.End
-					)!.ts - first.ts,
-				children: profile(block)
-			});
-		else
-			stack.push({ name: first.name, duration: entries.at(-1)!.ts - first.ts });
-		entries = entries.slice(blockEndIndex + 1, undefined);
-		// console.log('stack', stack);
+
+		const lastIndex = findEndIndex(entries, first);
+
+		if (lastIndex === -1) throw new Error('Invalid input');
+
+		const block = entries.slice(1, lastIndex);
+
+		stack.push({
+			name: first.name,
+			duration: entries[lastIndex].ts - first.ts,
+			children: profile(block)
+		});
+
+		entries = entries.slice(lastIndex + 1, undefined);
 	}
+
 	return stack;
 }
 
@@ -54,6 +56,8 @@ console.log(
 4, B, End
 5, A, End
 6, C, Start
+6.4, C, Start
+6.7, C, End
 7, C, End
 8, main, End`
 				.trim()
@@ -62,12 +66,11 @@ console.log(
 				.map(
 					v =>
 						({
-							ts: parseInt(v[0]),
+							ts: parseFloat(v[0]),
 							name: v[1],
 							type: v[2]
 						}) satisfies LogInputEntry
 				)
-				.sort((a, b) => a.ts - b.ts)
 		),
 		undefined,
 		2
