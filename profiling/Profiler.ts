@@ -17,7 +17,7 @@ export interface Profile {
 	children?: Profile[];
 }
 
-export function profile(entries: LogInputEntry[], parent?: string): Profile[] {
+export function profile(entries: LogInputEntry[]): Profile[] {
 	// console.log(parent, entries);
 	const stack: Profile[] = [];
 	while (entries.length > 0) {
@@ -34,7 +34,7 @@ export function profile(entries: LogInputEntry[], parent?: string): Profile[] {
 					entries.find(
 						v => v.name === first.name && v.type === LogInputEntryType.End
 					)!.ts - first.ts,
-				children: profile(block, first.name)
+				children: profile(block)
 			});
 		else
 			stack.push({ name: first.name, duration: entries.at(-1)!.ts - first.ts });
