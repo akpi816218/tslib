@@ -14,8 +14,21 @@ interface Profile {
 	children?: Profile[];
 }
 
-function findEndIndex(entries: LogInputEntry[], start: LogInputEntry): number {
-	// return entries.findIndex(v => v.name === start.name && v.type === 'End');
+function findEndIndex(entries: LogInputEntry[], startIndex = 0): number {
+	const first = entries[startIndex];
+
+	const realStack: [number, LogInputEntry][] = [];
+
+	for (const [i, v] of entries.entries()) {
+		if (i <= startIndex) continue;
+
+		if (v.name !== first.name) continue;
+
+		if (v.type === 'Start') realStack.push([i, v]);
+		else if (!realStack.pop()) return i;
+	}
+
+	return -1;
 }
 
 function profile(entries: LogInputEntry[]): Profile[] {
@@ -28,7 +41,7 @@ function profile(entries: LogInputEntry[]): Profile[] {
 	while (entries.length > 0) {
 		const first = entries[0];
 
-		const lastIndex = findEndIndex(entries, first);
+		const lastIndex = findEndIndex(entries);
 
 		if (lastIndex === -1) throw new Error('Invalid input');
 
@@ -57,6 +70,12 @@ console.log(
 5, A, End
 6, C, Start
 6.4, C, Start
+6.5, C, Start
+6.6, C, Start
+6.62, C, End
+6.63, C, Start
+6.64, C, End
+6.65, C, End
 6.7, C, End
 7, C, End
 8, main, End`
