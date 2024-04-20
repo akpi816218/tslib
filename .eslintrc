@@ -9,19 +9,15 @@
 	"root": true,
 	"rules": {
 		"@typescript-eslint/no-unused-vars": "error",
-		"comma-dangle": "error",
-		"eol-last": "error",
 		"getter-return": "error",
 		"no-alert": "error",
 		"no-const-assign": "error",
 		"no-fallthrough": "error",
 		"no-invalid-this": "error",
-		"no-irregular-whitespace": "error",
 		"no-lonely-if": "error",
 		"no-redeclare": "error",
 		"no-self-assign": "error",
 		"no-self-compare": "error",
-		"no-trailing-spaces": "error",
 		"no-unneeded-ternary": "error",
 		"no-unreachable": "error",
 		"no-unused-expressions": "error",
@@ -32,7 +28,6 @@
 		"prefer-const": "error",
 		"prefer-promise-reject-errors": "error",
 		"prefer-template": "error",
-		"semi-spacing": "error",
 		"strict": "error",
 		"use-isnan": "error"
 	}
